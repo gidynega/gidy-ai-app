@@ -930,4 +930,203 @@ async function sendMessage(e) {
     }
 }
 
+// Chat form submission
+chatForm?.addEventListener(
+    "submit",
+    sendMessage
+);
+
+
+// Press Enter to send
+userInput?.addEventListener("keydown", (e) => {
+
+    if (
+        e.key === "Enter" &&
+        !e.shiftKey
+    ) {
+
+        e.preventDefault();
+
+        sendMessage();
+    }
+});
+
+
+// =====================================================
+// 14. ATTACHMENT MENU
+// =====================================================
+
+// Open and close attachment menu
+attachmentButton?.addEventListener("click", (e) => {
+
+    e.preventDefault();
+
+    e.stopPropagation();
+
+    if (!attachmentOptions) return;
+
+    attachmentOptions.hidden =
+        !attachmentOptions.hidden;
+});
+
+
+// Close attachment menu when tapping outside
+document.addEventListener("click", (e) => {
+
+    if (
+        attachmentOptions &&
+        !attachmentOptions.hidden &&
+        !attachmentOptions.contains(e.target) &&
+        !attachmentButton?.contains(e.target)
+    ) {
+
+        attachmentOptions.hidden = true;
+    }
+});
+
+// =====================================================
+// 15. OPEN FILE PICKERS
+// =====================================================
+
+chooseImage?.addEventListener("click", () => {
+
+    if (attachmentOptions) {
+        attachmentOptions.hidden = true;
+    }
+
+    imageInput?.click();
+});
+
+
+chooseCamera?.addEventListener("click", () => {
+
+    if (attachmentOptions) {
+        attachmentOptions.hidden = true;
+    }
+
+    if (imageInput) {
+
+        imageInput.setAttribute(
+            "capture",
+            "environment"
+        );
+
+        imageInput.click();
+    }
+});
+
+
+choosePDF?.addEventListener("click", () => {
+
+    if (attachmentOptions) {
+        attachmentOptions.hidden = true;
+    }
+
+    pdfInput?.click();
+});
+
+
+chooseAudio?.addEventListener("click", () => {
+
+    if (attachmentOptions) {
+        attachmentOptions.hidden = true;
+    }
+
+    audioInput?.click();
+});
+
+
+chooseVideo?.addEventListener("click", () => {
+
+    if (attachmentOptions) {
+        attachmentOptions.hidden = true;
+    }
+
+    videoInput?.click();
+});
+
+// =====================================================
+// 16. FILE SELECTION & PREVIEW
+// =====================================================
+
+function handleFileSelection(inputElement) {
+
+    if (!inputElement) return;
+
+    inputElement.addEventListener("change", () => {
+
+        const files = Array.from(
+            inputElement.files || []
+        );
+
+        files.forEach(file => {
+
+            attachments.push(file);
+
+            if (attachmentPreview) {
+
+                const chip =
+                    document.createElement("span");
+
+                chip.className = "attachment-chip";
+
+                chip.textContent =
+                    "📎 " + file.name;
+
+                attachmentPreview.appendChild(chip);
+            }
+        });
+
+        // Reset file input for future selection
+        inputElement.value = "";
+
+        // Camera capture should not remain enabled
+        inputElement.removeAttribute("capture");
+    });
+}
+
+
+// Connect all file inputs
+[
+    imageInput,
+    pdfInput,
+    documentInput,
+    audioInput,
+    videoInput
+
+].forEach(handleFileSelection);
+
+// =====================================================
+// 17. INITIALIZE APPLICATION
+// =====================================================
+
+function initializeGidyAI() {
+
+    renderSidebarHistory();
+
+    loadHistory();
+
+    initializeAuthentication();
+
+    // Ensure attachment menu starts closed
+    if (attachmentOptions) {
+        attachmentOptions.hidden = true;
+    }
+
+    // Ensure send button is visible and enabled
+    if (sendBtn) {
+        sendBtn.hidden = false;
+        sendBtn.disabled = false;
+        sendBtn.textContent = "➤";
+    }
+}
+
+
+// Start application
+initializeGidyAI();
+
+
+/* =====================================================
+   END OF GIDY AI FRONTEND JAVASCRIPT V4.0
+===================================================== */
 
