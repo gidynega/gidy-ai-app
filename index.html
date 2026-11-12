@@ -2,13 +2,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0b0b18">
-  <title>Gidy AI</title>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color"
+          content="#0b0b18">
+
+    <meta name="description"
+          content="Gidy AI - Your personal intelligent AI assistant.">
+
+    <title>Gidy AI</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json">
+
+    <!-- App Icons -->
+    <link rel="icon"
+          type="image/png"
+          href="./icons/icon-192.png">
+
+    <link rel="apple-touch-icon"
+          href="./icons/icon-192.png">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="./style.css">
+
+    <!-- Application JavaScript -->
+    <script src="./script.js" defer></script>
 </head>
+
 <body>
-  <h1>Gidy AI</h1>
-  <p>Your independent AI assistant.</p>
+
+    <div class="app-container">
+
+        <header class="app-header">
+            <h1>Gidy AI ✨</h1>
+            <p>Your intelligent AI assistant</p>
+        </header>
+
+        <main class="welcome">
+            <h2>Welcome to Gidy AI!</h2>
+
+            <p>
+                Learn, create, explore and grow
+                with your personal AI assistant.
+            </p>
+        </main>
+
+        <footer class="app-footer">
+            © 2026 Gidy AI. All rights reserved.
+        </footer>
+
+    </div>
+
+    <!-- Register Service Worker -->
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register(
+                    "./service-worker.js"
+                ).catch(error => {
+                    console.error(
+                        "Service Worker error:",
+                        error
+                    );
+                });
+            });
+        }
+    </script>
+
 </body>
 </html>
