@@ -1,0 +1,87 @@
+
+/* =================================
+   GIDY AI — INDEPENDENT APP
+   Main Stylesheet
+================================= */
+
+:root {
+    --background: #0b0b18;
+    --surface: #17172a;
+    --surface-light: #202039;
+    --primary: #8187ff;
+    --secondary: #ff55c8;
+    --text: #ffffff;
+    --muted: #a5a5bd;
+    --border: #30304a;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+}
+
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-header {
+    padding: 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.app-header h1 {
+    font-size: 24px;
+    color: var(--primary);
+}
+
+.app-header p {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.welcome {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 25px;
+}
+
+.welcome h2 {
+    font-size: 28px;
+    margin-bottom: 12px;
+}
+
+.welcome p {
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.app-footer {
+    padding: 15px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+}
+
+@media (min-width: 768px) {
+    .app-container {
+        max-width: 1100px;
+        margin: auto;
+    }
+}
