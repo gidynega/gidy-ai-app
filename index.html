@@ -1,77 +1,213 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <meta name="theme-color"
-          content="#0b0b18">
-
-    <meta name="description"
-          content="Gidy AI - Your personal intelligent AI assistant.">
-
-    <title>Gidy AI</title>
-
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="./manifest.json">
-
-    <!-- App Icons -->
-    <link rel="icon"
-          type="image/png"
-          href="./icons/icon-192.png">
-
-    <link rel="apple-touch-icon"
-          href="./icons/icon-192.png">
-
-    <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="./style.css">
-
-    <!-- Application JavaScript -->
-    <script src="./script.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gidy AI — Your intelligent multimodal learning assistant for Pharmacy, Programming, Trading and education.">
+    <meta name="theme-color" content="#0b0b18">
+    <title>Gidy AI | Learning Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-
 <body>
+<div class="app">
 
-    <div class="app-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
 
-        <header class="app-header">
-            <h1>Gidy AI ✨</h1>
-            <p>Your intelligent AI assistant</p>
-        </header>
-
-        <main class="welcome">
-            <h2>Welcome to Gidy AI!</h2>
-
-            <p>
-                Learn, create, explore and grow
-                with your personal AI assistant.
-            </p>
-        </main>
-
-        <footer class="app-footer">
-            © 2026 Gidy AI. All rights reserved.
-        </footer>
-
+      
+<div class="brand">
+    <div class="brand-icon">G</div>
+    <div class="brand-info">
+        <h2>Gidy AI</h2>
+        <span>Learning Assistant</span>
     </div>
 
-    <!-- Register Service Worker -->
-    <script>
-        if ("serviceWorker" in navigator) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker.register(
-                    "./service-worker.js"
-                ).catch(error => {
-                    console.error(
-                        "Service Worker error:",
-                        error
-                    );
-                });
-            });
-        }
-    </script>
+    <button type="button" id="sidebarCloseBtn" class="sidebar-close-btn" aria-label="Close sidebar">
+        ✕
+    </button>
+</div>
 
+
+        <!-- NEW CONVERSATION BUTTON -->
+        <button class="new-chat" id="newChat">
+            <span>＋</span> New Conversation
+        </button>
+
+        <!-- CONVERSATION HISTORY LIST IN SIDEBAR -->
+        <div class="sidebar-section">
+            <p class="section-label">RECENT CONVERSATIONS</p>
+            <div class="history-list" id="historyList">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </div>
+
+        <!-- LEARNING AREAS -->
+        <div class="sidebar-section">
+            <p class="section-label">LEARNING AREAS</p>
+            <button class="subject-btn" data-prompt="Act as my Pharmacy tutor. Help me understand Pharmacy topics step by step.">💊 Pharmacy</button>
+            <button class="subject-btn" data-prompt="Act as my programming tutor. Teach me programming from beginner level.">💻 Programming</button>
+            <button class="subject-btn" data-prompt="Act as my Trading tutor. Teach me trading from beginner level.">📈 Trading</button>
+            <button class="subject-btn" data-prompt="Act as my Grade 9 to 12 educational tutor.">🎓 Smart Generation</button>
+        </div>
+
+        <div class="sidebar-bottom">
+            <a href="../index.html">← Back to Gidy Nega Website</a>
+            <p>Powered by Gidy Nega</p>
+        </div>
+
+    </aside>
+
+    <!-- MAIN AREA -->
+    <main class="main">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-btn" id="menuBtn">☰</button>
+                <div class="top-title">
+                    <h3>AI Learning Assistant</h3>
+                    <span><i class="online-dot"></i> Your learning companion</span>
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <button class="clear-btn" id="clearChat">Clear chat</button>
+
+                <!-- TOP-RIGHT USER ACCOUNT PROFILE DROPDOWN -->
+                <div class="user-menu-wrapper">
+                    <button type="button" class="profile-avatar-btn" id="profileMenuBtn" aria-label="User Account">
+                        <span id="userAvatarChar">👤</span>
+                    </button>
+
+                    <!-- ACCOUNT POPUP / DROPDOWN -->
+                    <div class="auth-dropdown" id="authDropdown" hidden>
+                        <div class="auth-heading">
+                            <strong>👤 Gidy AI Account</strong>
+                            <span id="authStatus">Not signed in</span>
+                        </div>
+
+                        <div id="authForms">
+                            <input type="email" id="authEmail" placeholder="Enter your email" autocomplete="email">
+                            <input type="password" id="authPassword" placeholder="Enter your password" autocomplete="current-password">
+
+                            <div class="auth-buttons">
+                                <button type="button" id="signUpBtn">Create Account</button>
+                                <button type="button" id="signInBtn">Log In</button>
+                            </div>
+                            <button type="button" id="resetPasswordBtn">Forgot password?</button>
+                        </div>
+
+                        <button type="button" id="signOutBtn" hidden>Log Out</button>
+                        <p id="authMessage" aria-live="polite"></p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CHAT AREA -->
+        <section class="chat-area" id="chatArea">
+
+            <div class="welcome" id="welcome">
+                <div class="welcome-icon">✦</div>
+                <h1>Welcome to <span>Gidy AI</span></h1>
+                <p>
+                    Your intelligent learning companion.
+                    Ask questions, upload learning materials,
+                    explore ideas and understand difficult topics.
+                </p>
+
+                <div class="suggestions">
+                    <button class="suggestion" data-prompt="Explain the introduction to pharmacy education.">
+                        <span>💊</span>
+                        <strong>Pharmacy</strong>
+                        <small>Learn Pharmacy step by step</small>
+                    </button>
+                    <button class="suggestion" data-prompt="Teach me Python programming from beginner level.">
+                        <span>💻</span>
+                        <strong>Programming</strong>
+                        <small>Learn Python programming</small>
+                    </button>
+                    <button class="suggestion" data-prompt="Explain what trading means.">
+                        <span>📊</span>
+                        <strong>Trading</strong>
+                        <small>Understand trading</small>
+                    </button>
+                    <button class="suggestion" data-prompt="Help me prepare for the Grade 12 national examination.">
+                        <span>🎓</span>
+                        <strong>School Learning</strong>
+                        <small>Prepare for examinations</small>
+                    </button>
+                </div>
+            </div>
+
+            <div class="messages" id="messages"></div>
+
+        </section>
+
+        <!-- INPUT SECTION -->
+        <footer class="input-section">
+
+            <!-- ATTACHMENT MENU -->
+            <div class="attachment-sheet" id="attachmentOptions" hidden>
+                <div class="sheet-handle"></div>
+                <div class="sheet-options">
+                    <button type="button" id="chooseImage"><span class="sheet-icon">🖼️</span><span>Photos</span></button>
+                    <button type="button" id="chooseCamera" class="camera-opt"><span class="sheet-icon">📷</span><span>Camera</span></button>
+                    <button type="button" id="choosePDF"><span class="sheet-icon">📄</span><span>Files</span></button>
+                    <button type="button" id="chooseAudio"><span class="sheet-icon">🎵</span><span>Audio</span></button>
+                    <button type="button" id="chooseVideo"><span class="sheet-icon">🎬</span><span>Video</span></button>
+                </div>
+            </div>
+
+            <!-- ATTACHMENT PREVIEW -->
+            <div id="attachmentPreview" class="attachment-preview" aria-live="polite"></div>
+
+            <!-- CHAT INPUT BAR -->
+            <form id="chatForm" class="input-box">
+                <button type="button" id="attachmentButton" aria-label="Add attachment" title="Add attachment">＋</button>
+
+                <input type="file" id="imageInput" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden>
+                <input type="file" id="pdfInput" accept=".pdf,application/pdf" multiple hidden>
+                <input type="file" id="documentInput" accept=".doc,.docx,.txt,.rtf,.csv,.json,.md,.ppt,.pptx,.xls,.xlsx" multiple hidden>
+                <input type="file" id="audioInput" accept="audio/*" multiple hidden>
+                <input type="file" id="videoInput" accept="video/*" multiple hidden>
+
+                <textarea id="userInput" placeholder="Ask Gidy AI..." rows="1"></textarea>
+
+                <button type="button" id="voiceButton" aria-label="Record voice" title="Record voice">🎤</button>
+                <button type="submit" id="sendBtn" aria-label="Send message" title="Send message">➤</button>
+            </form>
+
+            <div class="input-footer-controls">
+                <div id="recordingStatus" class="recording-status" hidden>
+                    🔴 Recording voice...
+                    <button type="button" id="stopRecording">Stop recording</button>
+                </div>
+
+                <div class="voice-controls">
+                    <label for="speakReplies">
+                        <input type="checkbox" id="speakReplies">
+                        <span>🔊 Speak AI replies</span>
+                    </label>
+                </div>
+            </div>
+
+            <p class="disclaimer">
+                Gidy AI can make mistakes. Verify important information. Educational use only.
+            </p>
+        </footer>
+
+    </main>
+</div>
+
+<!-- EXTERNAL LIBRARIES -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
 </body>
 </html>
