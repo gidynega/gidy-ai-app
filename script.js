@@ -756,8 +756,10 @@ async function streamTextResponse(fullText) {
 }
 
 
+
 // =====================================================
-// 11. BACKEND API CONNECTION
+// 11. BACKEND API CONNECTION V5
+// Supports JSON and multipart file uploads
 // =====================================================
 
 async function apiRequest(path, options = {}) {
@@ -767,15 +769,24 @@ async function apiRequest(path, options = {}) {
         options
     );
 
-    if (!response.ok) {
+    let data;
+
+    try {
+        data = await response.json();
+    } catch (error) {
         throw new Error(
-            "Server error: " + response.status
+            "The server returned an invalid response."
         );
     }
 
-    return response.json();
-}
+    if (!response.ok || data.success === false) {
+        throw new Error(
+            data.error || "Server error: " + response.status
+        );
+    }
 
+    return data;
+}
 
 // =====================================================
 // 12. LOAD CONVERSATION HISTORY FROM BACKEND
@@ -821,8 +832,10 @@ async function loadHistory() {
 }
 
 
+
 // =====================================================
-// 13. SEND MESSAGE TO GIDY AI
+// 13. SEND MESSAGE TO GIDY AI V5
+// MULTIPLE FILE UPLOAD + TEXT
 // =====================================================
 
 async function sendMessage(e) {
@@ -834,11 +847,9 @@ async function sendMessage(e) {
     if (isSending) return;
 
     if (!currentUser) {
-
         alert(
             "Please log in first using the top-right profile icon."
         );
-
         return;
     }
 
@@ -846,15 +857,38 @@ async function sendMessage(e) {
 
     const text = userInput.value.trim();
 
+    // Check message and attachments
     if (!text && attachments.length === 0) {
         return;
     }
 
-    // Current backend endpoint sends text only.
-    if (!text && attachments.length > 0) {
+    // Maximum 8 files
+    if (attachments.length > 8) {
+        alert("You can upload a maximum of 8 files.");
+        return;
+    }
+
+    // Maximum 10 MB per file
+    const oversizedFile = attachments.find(
+        file => file.size > 10 * 1024 * 1024
+    );
+
+    if (oversizedFile) {
         alert(
-            "Please enter a message. File transmission requires the backend upload integration."
+            oversizedFile.name +
+            " exceeds the 10 MB file limit."
         );
+        return;
+    }
+
+    // Maximum 20 MB total
+    const totalSize = attachments.reduce(
+        (total, file) => total + file.size,
+        0
+    );
+
+    if (totalSize > 20 * 1024 * 1024) {
+        alert("Total attachment size exceeds 20 MB.");
         return;
     }
 
@@ -865,7 +899,17 @@ async function sendMessage(e) {
         sendBtn.textContent = "…";
     }
 
-    addMessage("user", text);
+    // Prepare attachment names for chat display
+    const fileNames = attachments.map(
+        file => "📎 " + file.name
+    );
+
+    const displayMessage = [
+        text || "Please analyze my uploaded files.",
+        ...fileNames
+    ].join("\n\n");
+
+    addMessage("user", displayMessage);
 
     userInput.value = "";
 
@@ -876,47 +920,99 @@ async function sendMessage(e) {
         session => session.id === conversationId
     )) {
 
+        const title = text
+            ? text.slice(0, 24) +
+              (text.length > 24 ? "..." : "")
+            : attachments[0]?.name || "File conversation";
+
         saveConversationToHistory(
             conversationId,
-            text.slice(0, 24) +
-            (text.length > 24 ? "..." : "")
+            title
         );
     }
 
     try {
 
-        const payload = {
-            message: text,
-            conversationId: conversationId
-        };
+        // Create multipart request
+        const formData = new FormData();
+
+        formData.append(
+            "message",
+            text
+        );
+
+        formData.append(
+            "conversationId",
+            conversationId
+        );
+
+        // Attach every selected file
+        attachments.forEach(file => {
+
+            formData.append(
+                "files",
+                file,
+                file.name
+            );
+
+        });
+
+        // Send actual files to Cloudflare Worker
+        // IMPORTANT: Do not manually set Content-Type.
+        // Browser automatically adds multipart boundary.
 
         const data = await apiRequest("/chat", {
+
             method: "POST",
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+            body: formData
 
-            body: JSON.stringify(payload)
         });
 
         if (data.reply) {
 
+            // Files successfully processed.
+            attachments = [];
+
+            if (attachmentPreview) {
+                attachmentPreview.innerHTML = "";
+            }
+
             await streamTextResponse(data.reply);
+
+            // Inform user about unsupported files
+            if (
+                data.unsupported &&
+                data.unsupported.length > 0
+            ) {
+
+                addMessage(
+                    "assistant",
+                    "⚠️ These files were not processed: " +
+                    data.unsupported.join(", ")
+                );
+
+            }
 
         } else {
 
-            addMessage(
-                "assistant",
+            throw new Error(
                 "No response received from Gidy AI."
             );
+
         }
 
     } catch (error) {
 
+        console.error(
+            "Gidy AI upload error:",
+            error
+        );
+
         addMessage(
             "assistant",
-            "⚠️ Error: " + error.message
+            "⚠️ " + error.message +
+            "\n\nYour attachments are still selected. You can try again."
         );
 
     } finally {
@@ -925,10 +1021,13 @@ async function sendMessage(e) {
 
         if (sendBtn) {
             sendBtn.disabled = false;
+            sendBtn.hidden = false;
             sendBtn.textContent = "➤";
         }
+
     }
 }
+
 
 // Chat form submission
 chatForm?.addEventListener(
@@ -949,6 +1048,7 @@ userInput?.addEventListener("keydown", (e) => {
 
         sendMessage();
     }
+
 });
 
 
